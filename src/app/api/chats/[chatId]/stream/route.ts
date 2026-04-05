@@ -26,16 +26,6 @@ export async function POST(
       );
     }
 
-    console.log("Images received:", images?.length, "images");
-    console.log("Body keys:", Object.keys(body));
-    console.log("Has content:", !!content, "Content length:", content?.length);
-    if (images && images.length > 0) {
-      console.log("First image type:", images[0]?.substring(0, 50));
-      console.log("First image data length:", images[0]?.length);
-    }
-    console.log("Model requested:", model);
-    console.log("DEFAULT_MODEL:", DEFAULT_MODEL);
-
     // Fetch all messages for context (user message already saved via messages endpoint)
     const { data: messages } = await supabase
       .from("messages")
@@ -162,10 +152,6 @@ export async function POST(
 
     let stream;
     try {
-      console.log("Making API call with model:", modelName);
-      console.log("Messages count:", apiMessages.length);
-      console.log("User message parts:", apiMessages[apiMessages.length - 1]?.content?.length);
-      
       stream = await client.chat.completions.create({
         model: modelName,
         messages: apiMessages,

@@ -25,7 +25,11 @@ const suggestions = [
   },
 ];
 
-export function WelcomeScreen() {
+interface WelcomeScreenProps {
+  onSuggestionClick?: (message: string) => void;
+}
+
+export function WelcomeScreen({ onSuggestionClick }: WelcomeScreenProps) {
   return (
     <div className="flex h-full flex-col items-center justify-center px-4 py-8">
       <div className="max-w-2xl text-center">
@@ -47,13 +51,7 @@ export function WelcomeScreen() {
             <button
               key={index}
               className="flex items-start gap-3 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
-              onClick={() => {
-                // This will be handled by the parent component
-                const event = new CustomEvent("suggestion-click", {
-                  detail: suggestion.description,
-                });
-                window.dispatchEvent(event);
-              }}
+              onClick={() => onSuggestionClick?.(suggestion.description)}
             >
               <div className="rounded-lg bg-zinc-100 dark:bg-zinc-700 p-2">
                 <suggestion.icon className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ChatInput } from "@/components/chat/chat-input";
 import { MessageList } from "@/components/chat/message-list";
+import { DocumentUpload } from "@/components/chat/document-upload";
 import { Message, LLMModel } from "@/lib/types";
 import { subscribeToChat } from "@/lib/supabase/realtime";
 import { DEFAULT_MODEL } from "@/lib/constants";
@@ -42,6 +43,7 @@ export default function ChatIdPage({
   const [selectedModel, setSelectedModel] = useState<LLMModel>(DEFAULT_MODEL);
   const [anonymousRemaining, setAnonymousRemaining] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [documentIds, setDocumentIds] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,10 +85,12 @@ export default function ChatIdPage({
       message,
       images,
       model,
+      documentIds,
     }: {
       message: string;
       images?: string[];
       model?: LLMModel;
+      documentIds?: string[];
     }) => {
       if (!chatId) throw new Error("No chat ID");
 
@@ -124,6 +128,7 @@ export default function ChatIdPage({
         body: JSON.stringify({
           content: message,
           images,
+          documentIds,
           model,
           ...identifier,
         }),
@@ -211,10 +216,10 @@ export default function ChatIdPage({
   const handleSendMessage = async (
     message: string,
     images?: string[],
-    _documentIds?: string[]
+    documentIds?: string[]
   ) => {
     setError(null);
-    const result = await sendMessageMutation.mutateAsync({ message, images, model: selectedModel });
+    const result = await sendMessageMutation.mutateAsync({ message, images, model: selectedModel, documentIds });
     if (result?.blocked) return;
   };
 
@@ -222,7 +227,7 @@ export default function ChatIdPage({
   useEffect(() => {
     if (!chatId) return;
 
-    const channel = subscribeToChat(chatId, (_message) => {
+    const channel = subscribeToChat(chatId, () => {
       queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
     });
 
@@ -289,6 +294,16 @@ export default function ChatIdPage({
           model={selectedModel}
           onModelChange={setSelectedModel}
           anonymousRemaining={anonymousRemaining}
+          documentUploadSlot={
+            chatId ? (
+              <DocumentUpload
+                chatId={chatId}
+                userId={identifier.userId ?? null}
+                onDocumentsUploaded={setDocumentIds}
+              />
+            ) : undefined
+          }
+          selectedDocumentIds={documentIds}
         />
       </div>
     </div>

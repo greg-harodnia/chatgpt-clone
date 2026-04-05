@@ -48,8 +48,8 @@ export default function ChatPage() {
   }, []);
 
   const createChatMutation = useMutation({
-    mutationFn: async (params: { message: string; images?: string[] }) => {
-      const { message, images } = params;
+    mutationFn: async (params: { message: string; images?: string[]; documentIds?: string[] }) => {
+      const { message, images, documentIds } = params;
       const identifier = getIdentifier();
 
       if (identifier.anonymousId) {
@@ -95,6 +95,7 @@ export default function ChatPage() {
         body: JSON.stringify({
           content: message,
           images,
+          documentIds,
           model: selectedModel,
           ...identifier,
         }),
@@ -112,12 +113,12 @@ export default function ChatPage() {
     },
   });
 
-  const handleSendMessage = async (message: string, images?: string[]) => {
+  const handleSendMessage = async (message: string, images?: string[], documentIds?: string[]) => {
     if (isCreating) return;
     setIsCreating(true);
     setError(null);
     try {
-      const result = await createChatMutation.mutateAsync({ message, images });
+      const result = await createChatMutation.mutateAsync({ message, images, documentIds });
       if (result?.blocked) {
         setIsCreating(false);
         return;
@@ -127,10 +128,14 @@ export default function ChatPage() {
     }
   };
 
+  const handleSuggestionClick = (message: string) => {
+    handleSendMessage(message);
+  };
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto">
-        <WelcomeScreen />
+        <WelcomeScreen onSuggestionClick={handleSuggestionClick} />
       </div>
       {error && (
         <div className="mx-4 mb-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-center justify-between gap-3">

@@ -3,6 +3,7 @@
 import { Message } from "@/lib/types";
 import { User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface MessageListProps {
   messages: Message[];
@@ -12,11 +13,10 @@ interface MessageListProps {
 export function MessageList({ messages, isStreaming }: MessageListProps) {
   return (
     <div className="space-y-4 max-w-4xl mx-auto">
-      {messages.map((message, index) => (
+      {messages.map((message) => (
         <MessageItem
           key={message.id}
           message={message}
-          isLast={index === messages.length - 1}
           isStreaming={isStreaming && message.id === "streaming"}
         />
       ))}
@@ -26,11 +26,9 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
 
 function MessageItem({
   message,
-  isLast: _isLast,
   isStreaming,
 }: {
   message: Message;
-  isLast: boolean;
   isStreaming?: boolean;
 }) {
   const isUser = message.role === "user";
@@ -63,10 +61,12 @@ function MessageItem({
         {message.images && message.images.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-2">
             {message.images.map((img, index) => (
-              <img
+              <Image
                 key={index}
                 src={img}
                 alt={`Attachment ${index + 1}`}
+                width={200}
+                height={200}
                 className="max-w-[200px] max-h-[200px] object-cover rounded-lg"
               />
             ))}

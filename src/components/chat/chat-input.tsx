@@ -15,6 +15,7 @@ import { Send, Image as ImageIcon, X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LLMModel } from "@/lib/types";
 import { AVAILABLE_MODELS, DEFAULT_MODEL } from "@/lib/constants";
+import Image from "next/image";
 
 interface ChatInputProps {
   onSend: (message: string, images?: string[], documentIds?: string[]) => void;
@@ -23,6 +24,8 @@ interface ChatInputProps {
   model?: LLMModel;
   onModelChange?: (model: LLMModel) => void;
   anonymousRemaining?: number | null;
+  documentUploadSlot?: React.ReactNode;
+  selectedDocumentIds?: string[];
 }
 
 export function ChatInput({
@@ -32,6 +35,8 @@ export function ChatInput({
   model = DEFAULT_MODEL,
   onModelChange,
   anonymousRemaining,
+  documentUploadSlot,
+  selectedDocumentIds,
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -46,7 +51,7 @@ export function ChatInput({
 
   const handleSubmit = () => {
     if (!message.trim() && images.length === 0) return;
-    onSend(message.trim(), images.length > 0 ? images : undefined);
+    onSend(message.trim(), images.length > 0 ? images : undefined, selectedDocumentIds);
     setMessage("");
     setImages([]);
   };
@@ -113,13 +118,16 @@ export function ChatInput({
           )}
         </div>
       )}
+      {documentUploadSlot}
       {images.length > 0 && (
         <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
           {images.map((img, index) => (
             <div key={index} className="relative flex-shrink-0">
-              <img
+              <Image
                 src={img}
                 alt={`Attachment ${index + 1}`}
+                width={80}
+                height={80}
                 className="h-20 w-20 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700"
               />
               <button
@@ -179,7 +187,7 @@ export function ChatInput({
               {AVAILABLE_MODELS.map((m) => (
                 <DropdownMenuItem
                   key={m.id}
-                  onClick={() => onModelChange?.(m.id)}
+                  onClick={() => onModelChange?.(m.id as LLMModel)}
                   className={cn(m.id === model && "bg-accent")}
                 >
                   {m.label}

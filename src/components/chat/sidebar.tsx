@@ -43,7 +43,7 @@ export function Sidebar({ open }: SidebarProps) {
     const channel = subscribeToChatList(
       identifier.userId || null,
       identifier.anonymousId || null,
-      (_chat) => {
+      () => {
         queryClient.invalidateQueries({ queryKey: ["chats", identifier] });
       }
     );

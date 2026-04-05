@@ -122,7 +122,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       created_at: data.user.created_at || "",
     });
     setAnonymousId(null);
-    deleteCookie("anonymous_id");
   };
 
   const register = async (email: string, password: string) => {
@@ -143,9 +142,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    const newId = uuidv4();
-    setCookie("anonymous_id", newId, 365);
-    setAnonymousId(newId);
+    const stored = getCookie("anonymous_id");
+    if (stored) {
+      setAnonymousId(stored);
+    } else {
+      const newId = uuidv4();
+      setCookie("anonymous_id", newId, 365);
+      setAnonymousId(newId);
+    }
   };
 
   const getIdentifier = () => {
@@ -180,8 +184,4 @@ function getCookie(name: string): string | null {
 function setCookie(name: string, value: string, days: number) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
-}
-
-function deleteCookie(name: string) {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 }

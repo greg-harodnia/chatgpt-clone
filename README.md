@@ -1,11 +1,11 @@
 # ChatGPT Clone
 
-A ChatGPT-like chatbot interface built with Next.js, Supabase, and OpenAI.
+A ChatGPT-like chatbot interface built with Next.js, Supabase, and OpenRouter.
 
 ## Features
 
 - Send messages to chat with streaming responses
-- Integrate OpenAI API (GPT-4o, GPT-4o-mini, GPT-3.5-turbo)
+- Integrate multiple LLMs via OpenRouter (Qwen, Gemma, Gemini)
 - Left side navigation with chat list, persisted in database
 - User authentication and login
 - Paste or attach images to chat
@@ -21,13 +21,13 @@ A ChatGPT-like chatbot interface built with Next.js, Supabase, and OpenAI.
 - **Database**: PostgreSQL via Supabase
 - **Auth**: Supabase Authentication
 - **Realtime**: Supabase Realtime
-- **AI**: OpenAI API
+- **AI**: OpenRouter API
 
 ## Prerequisites
 
 - Node.js 18+ or Bun
 - Supabase account
-- OpenAI API key
+- OpenRouter API key
 
 ## Setup
 
@@ -65,8 +65,8 @@ bun install
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-   # OpenAI
-   OPENAI_API_KEY=sk-your-openai-key
+   # OpenRouter
+   OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key
    ```
 
 5. Run the development server:
