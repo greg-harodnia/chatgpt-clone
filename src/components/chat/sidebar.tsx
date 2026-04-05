@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, MessageSquare, Trash2, LogIn, LogOut } from "lucide-react";
+import { Plus, MessageSquare, Trash2, LogIn, LogOut, X } from "lucide-react";
 import { Chat } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { subscribeToChatList } from "@/lib/supabase/realtime";
@@ -15,7 +15,7 @@ interface SidebarProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function Sidebar({ open }: SidebarProps) {
+export function Sidebar({ open, onOpenChange }: SidebarProps) {
   const { user, logout, getIdentifier } = useAuth();
   const queryClient = useQueryClient();
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -36,7 +36,6 @@ export function Sidebar({ open }: SidebarProps) {
     enabled: !!identifier.userId || !!identifier.anonymousId,
   });
 
-  // Subscribe to real-time updates
   useEffect(() => {
     if (!identifier.userId && !identifier.anonymousId) return;
 
@@ -67,9 +66,9 @@ export function Sidebar({ open }: SidebarProps) {
       return res.json() as Promise<Chat>;
     },
     onSuccess: (newChat) => {
+      onOpenChange(false);
       queryClient.invalidateQueries({ queryKey: ["chats", identifier] });
       setActiveChatId(newChat.id);
-      // Navigate to new chat
       window.location.href = `/chat/${newChat.id}`;
     },
   });
@@ -90,38 +89,44 @@ export function Sidebar({ open }: SidebarProps) {
     },
   });
 
-  if (!open) {
-    return (
-      <div className="w-0 overflow-hidden transition-all duration-300">
-        <div className="w-64 h-full flex flex-col bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800">
-          <SidebarContent
-            chats={chats}
-            isLoading={isLoading}
-            activeChatId={activeChatId}
-            setActiveChatId={setActiveChatId}
-            createChat={() => createChatMutation.mutate()}
-            deleteChat={(id) => deleteChatMutation.mutate(id)}
-            user={user}
-            logout={logout}
-          />
-        </div>
-      </div>
-    );
-  }
+  const handleChatSelect = (chatId: string) => {
+    setActiveChatId(chatId);
+    onOpenChange(false);
+    window.location.href = `/chat/${chatId}`;
+  };
 
   return (
-    <div className="w-64 h-full flex flex-col bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 transition-all duration-300">
-      <SidebarContent
-        chats={chats}
-        isLoading={isLoading}
-        activeChatId={activeChatId}
-        setActiveChatId={setActiveChatId}
-        createChat={() => createChatMutation.mutate()}
-        deleteChat={(id) => deleteChatMutation.mutate(id)}
-        user={user}
-        logout={logout}
-      />
-    </div>
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => onOpenChange(false)}
+        />
+      )}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex h-dvh w-64 flex-col bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 transition-transform duration-300 md:relative md:z-auto md:translate-x-0 md:h-auto md:border-r",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800 md:hidden">
+          <span className="font-medium">Chats</span>
+          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+        <SidebarContent
+          chats={chats}
+          isLoading={isLoading}
+          activeChatId={activeChatId}
+          createChat={() => createChatMutation.mutate()}
+          deleteChat={(id) => deleteChatMutation.mutate(id)}
+          onChatSelect={handleChatSelect}
+          user={user}
+          logout={logout}
+        />
+      </div>
+    </>
   );
 }
 
@@ -129,18 +134,18 @@ function SidebarContent({
   chats,
   isLoading,
   activeChatId,
-  setActiveChatId,
   createChat,
   deleteChat,
+  onChatSelect,
   user,
   logout,
 }: {
   chats: Chat[];
   isLoading: boolean;
   activeChatId: string | null;
-  setActiveChatId: (id: string | null) => void;
   createChat: () => void;
   deleteChat: (id: string) => void;
+  onChatSelect: (id: string) => void;
   user: { id: string; email: string } | null;
   logout: () => Promise<void>;
 }) {
@@ -184,10 +189,7 @@ function SidebarContent({
                     ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                     : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900"
                 )}
-                onClick={() => {
-                  setActiveChatId(chat.id);
-                  window.location.href = `/chat/${chat.id}`;
-                }}
+                onClick={() => onChatSelect(chat.id)}
               >
                 <MessageSquare className="h-4 w-4 flex-shrink-0" />
                 <span className="flex-1 truncate">{chat.title}</span>

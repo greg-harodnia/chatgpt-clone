@@ -250,7 +250,7 @@ export default function ChatIdPage({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-zinc-100"></div>
@@ -265,7 +265,7 @@ export default function ChatIdPage({
         <div ref={messagesEndRef} />
       </div>
       {error && (
-        <div className="mx-4 mb-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-center justify-between gap-3">
+        <div className="mx-3 sm:mx-4 mb-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span className="text-sm">{error}</span>
@@ -286,7 +286,7 @@ export default function ChatIdPage({
           </div>
         </div>
       )}
-      <div className="border-t border-zinc-200 dark:border-zinc-800 p-4">
+      <div className="border-t border-zinc-200 dark:border-zinc-800 p-3 sm:p-4">
         <ChatInput
           onSend={handleSendMessage}
           disabled={isStreaming}

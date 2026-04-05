@@ -12,7 +12,7 @@ interface MessageListProps {
 
 export function MessageList({ messages, isStreaming }: MessageListProps) {
   return (
-    <div className="space-y-4 max-w-4xl mx-auto">
+    <div className="space-y-3 sm:space-y-4 max-w-4xl mx-auto">
       {messages.map((message) => (
         <MessageItem
           key={message.id}
@@ -36,23 +36,23 @@ function MessageItem({
   return (
     <div
       className={cn(
-        "flex gap-3",
+        "flex gap-2 sm:gap-3",
         isUser ? "flex-row-reverse" : "flex-row"
       )}
     >
       <div
         className={cn(
-          "flex-shrink-0 rounded-full p-2",
+          "flex-shrink-0 rounded-full p-1.5 sm:p-2",
           isUser
             ? "bg-blue-500 text-white"
             : "bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
         )}
       >
-        {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+        {isUser ? <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
       </div>
       <div
         className={cn(
-          "flex-1 rounded-2xl px-4 py-3 max-w-[80%]",
+          "flex-1 rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 max-w-[85%] sm:max-w-[80%]",
           isUser
             ? "bg-blue-500 text-white rounded-br-md"
             : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-bl-md"
@@ -65,14 +65,14 @@ function MessageItem({
                 key={index}
                 src={img}
                 alt={`Attachment ${index + 1}`}
-                width={200}
-                height={200}
-                className="max-w-[200px] max-h-[200px] object-cover rounded-lg"
+                width={150}
+                height={150}
+                className="max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] object-cover rounded-lg"
               />
             ))}
           </div>
         )}
-        <div className="whitespace-pre-wrap">{message.content}</div>
+        <div className="whitespace-pre-wrap text-sm sm:text-base">{message.content}</div>
         {isStreaming && (
           <span className="inline-block ml-1 animate-pulse">▊</span>
         )}

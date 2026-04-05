@@ -128,7 +128,7 @@ export function ChatInput({
                 alt={`Attachment ${index + 1}`}
                 width={80}
                 height={80}
-                className="h-20 w-20 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700"
+                className="h-16 w-16 sm:h-20 sm:w-20 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700"
               />
               <button
                 onClick={() => removeImage(index)}
@@ -176,7 +176,7 @@ export function ChatInput({
         <DropdownMenu>
           <DropdownMenuTrigger
             disabled={disabled}
-            className="inline-flex items-center gap-1 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 h-11 text-xs"
+            className="hidden sm:inline-flex items-center gap-1 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 h-11 text-xs"
           >
             {AVAILABLE_MODELS.find((m) => m.id === model)?.label ?? "Model"}
             <ChevronDown className="h-3 w-3" />
@@ -200,7 +200,7 @@ export function ChatInput({
           onClick={handleSubmit}
           disabled={disabled || (!message.trim() && images.length === 0)}
           size="icon"
-          className="h-11 w-11"
+          className="h-11 w-11 flex-shrink-0"
         >
           <Send className="h-5 w-5" />
         </Button>
