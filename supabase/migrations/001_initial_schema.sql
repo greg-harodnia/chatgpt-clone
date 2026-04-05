@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Chats table
 CREATE TABLE IF NOT EXISTS chats (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   anonymous_id TEXT,
   title TEXT NOT NULL DEFAULT 'New Chat',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS documents (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   chat_id UUID NOT NULL REFERENCES chats(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   file_name TEXT NOT NULL,
   file_size INTEGER NOT NULL DEFAULT 0,
   content TEXT NOT NULL DEFAULT '',

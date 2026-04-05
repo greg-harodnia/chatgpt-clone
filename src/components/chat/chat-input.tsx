@@ -22,6 +22,7 @@ interface ChatInputProps {
   placeholder?: string;
   model?: LLMModel;
   onModelChange?: (model: LLMModel) => void;
+  anonymousRemaining?: number | null;
 }
 
 export function ChatInput({
@@ -30,6 +31,7 @@ export function ChatInput({
   placeholder = "Type a message...",
   model = DEFAULT_MODEL,
   onModelChange,
+  anonymousRemaining,
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -102,6 +104,15 @@ export function ChatInput({
 
   return (
     <div className="relative">
+      {anonymousRemaining !== null && anonymousRemaining !== undefined && (
+        <div className="mb-2 text-xs text-zinc-500 dark:text-zinc-400">
+          {anonymousRemaining > 0 ? (
+            <span>{anonymousRemaining} free message{anonymousRemaining !== 1 ? "s" : ""} remaining</span>
+          ) : (
+            <span className="text-amber-600 dark:text-amber-400">Free limit reached. Log in for unlimited access.</span>
+          )}
+        </div>
+      )}
       {images.length > 0 && (
         <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
           {images.map((img, index) => (

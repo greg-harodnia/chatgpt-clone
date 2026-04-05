@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, MessageSquare, Trash2, LogIn, LogOut, User } from "lucide-react";
+import { Plus, MessageSquare, Trash2, LogIn, LogOut } from "lucide-react";
 import { Chat } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { subscribeToChatList } from "@/lib/supabase/realtime";
@@ -15,7 +15,7 @@ interface SidebarProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function Sidebar({ open, onOpenChange }: SidebarProps) {
+export function Sidebar({ open }: SidebarProps) {
   const { user, logout, getIdentifier } = useAuth();
   const queryClient = useQueryClient();
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
     const channel = subscribeToChatList(
       identifier.userId || null,
       identifier.anonymousId || null,
-      (chat) => {
+      (_chat) => {
         queryClient.invalidateQueries({ queryKey: ["chats", identifier] });
       }
     );
@@ -141,7 +141,7 @@ function SidebarContent({
   setActiveChatId: (id: string | null) => void;
   createChat: () => void;
   deleteChat: (id: string) => void;
-  user: any;
+  user: { id: string; email: string } | null;
   logout: () => Promise<void>;
 }) {
   return (

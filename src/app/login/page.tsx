@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,8 +30,8 @@ export default function LoginPage() {
         await register(email, password);
       }
       window.location.href = "/chat";
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -121,12 +122,12 @@ export default function LoginPage() {
             </button>
           </div>
           <div className="mt-4 text-center">
-            <a
+            <Link
               href="/chat"
               className="text-sm text-zinc-600 dark:text-zinc-400 hover:underline"
             >
               Continue as guest
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

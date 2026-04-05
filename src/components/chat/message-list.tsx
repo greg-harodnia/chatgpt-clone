@@ -26,7 +26,7 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
 
 function MessageItem({
   message,
-  isLast,
+  isLast: _isLast,
   isStreaming,
 }: {
   message: Message;

@@ -172,15 +172,18 @@ export async function POST(
         stream: true,
         max_tokens: 4096,
       });
-    } catch (apiError: any) {
-      console.error("OpenRouter API Error:", JSON.stringify(apiError, null, 2));
+    } catch (apiError: unknown) {
+      console.error("OpenRouter API Error:", apiError);
       let errorMessage = "API Error";
-      if (apiError?.error?.error?.message) {
-        errorMessage = apiError.error.error.message;
-      } else if (apiError?.message) {
+      if (apiError && typeof apiError === "object" && "error" in apiError) {
+        const err = apiError as { error?: { error?: { message?: string } } | string };
+        if (typeof err.error === "object" && err.error?.error?.message) {
+          errorMessage = err.error.error.message;
+        } else if (typeof err.error === "string") {
+          errorMessage = err.error;
+        }
+      } else if (apiError instanceof Error) {
         errorMessage = apiError.message;
-      } else if (apiError?.response?.data?.error?.message) {
-        errorMessage = apiError.response.data.error.message;
       }
       return NextResponse.json({ error: `OpenRouter Error: ${errorMessage}` }, { status: 400 });
     }
