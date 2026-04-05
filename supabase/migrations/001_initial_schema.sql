@@ -1,13 +1,6 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Users table (mirrors Supabase auth.users)
-CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  email TEXT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
 -- Chats table
 CREATE TABLE IF NOT EXISTS chats (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
